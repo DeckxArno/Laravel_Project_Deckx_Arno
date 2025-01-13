@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 @section('title', 'Home - Activiteitenpagina')
 
 @section('header')
@@ -30,4 +34,8 @@
             @endforeach
         @endif
     </div>
+@endsection
+
+@section('footer')
+
 @endsection

@@ -1,29 +1,28 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('layouts.profile_layout')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+@section('content')
+<div class="container">
+    <h1>Profiel bewerken</h1>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
+    <form action="{{ route('profile.update', $user) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="mb-3">
+            <label for="username" class="form-label">Gebruikersnaam</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ old('username', $user->username) }}">
         </div>
-    </div>
-</x-app-layout>
+        <div class="mb-3">
+            <label for="birthday" class="form-label">Verjaardag</label>
+            <input type="date" class="form-control" id="birthday" name="birthday" value="{{ old('birthday', $user->birthday) }}">
+        </div>
+        <div class="mb-3">
+            <label for="profile_photo" class="form-label">Profielfoto</label>
+            <input type="file" class="form-control" id="profile_photo" name="profile_photo">
+        </div>
+        <div class="mb-3">
+            <label for="about_me" class="form-label">Over mij</label>
+            <textarea class="form-control" id="about_me" name="about_me" rows="4">{{ old('about_me', $user->about_me) }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Opslaan</button>
+    </form>
+</div>
+@endsection

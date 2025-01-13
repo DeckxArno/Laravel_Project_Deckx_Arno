@@ -21,12 +21,11 @@ Route::get('/', function () {
 // Voeg de route toe voor de homepage
 Route::get('/home', [AuthenticatedSessionController::class, 'redirectToHome'])->middleware('auth')->name('home');
 
-
+Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile/{user}/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/{user}', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Login en registratie
@@ -43,17 +42,23 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/make-admin/{id}', [AdminController::class, 'makeAdmin'])->name('admin.makeAdmin');
     Route::post('/admin/remove-admin/{id}', [AdminController::class, 'removeAdmin'])->name('admin.removeAdmin');
 });
-    
-
-/* Gebruikersdashboard
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
-*/
 
 // Logout
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+Route::post('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+})->name('logout');
+
+
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
 
 require __DIR__.'/auth.php';

@@ -29,7 +29,7 @@
     <nav style="margin-left: 20px;">
         <ul style="display: flex; list-style: none; margin: 0; padding: 0;">
             <li style="margin-right: 20px;">
-                <a href="{{ url('/profile') }}" style="text-decoration: none; color: #333;">Profiel</a>
+                <a href="{{ route('profile.show', auth()->user()) }}" style="text-decoration: none; color: #333;">Profiel</a>
             </li>
             <li>
                 <a href="{{ url('/contact') }}" style="text-decoration: none; color: #333;">Contact</a>
