@@ -3,62 +3,81 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use \Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\FAQController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\ContactMessageController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\Auth\LoginController;
-
-Route::get('/', function () {
-    return Auth::check() ? redirect()->route('home') : redirect()->route('login');
-});
-
 
 Route::get('/', function () {
     return view('welcome');
-})->name('welcome');
+});
 
-// Voeg de route toe voor de homepage
-Route::get('/home', [AuthenticatedSessionController::class, 'redirectToHome'])->middleware('auth')->name('home');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
+Route::get('/dashboard', [ActivityController::class, 'index']);
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile/{user}/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile/{user}', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::resource('faq', FAQController::class)->except(['show']);
+    Route::post('/news/{news}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
 
-// Login en registratie
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']);
-});
+Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile.show');
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-// Alleen toegankelijk voor admins
+//public news
+Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
+
+//public faq
+Route::get('faq', [FAQController::class, 'index'])->name('faq.index');
+
+//public contact
+Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-    Route::post('/admin/make-admin/{id}', [AdminController::class, 'makeAdmin'])->name('admin.makeAdmin');
-    Route::post('/admin/remove-admin/{id}', [AdminController::class, 'removeAdmin'])->name('admin.removeAdmin');
+    // dashboard
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::post('/admin/user/{id}/make-admin', [AdminController::class, 'makeAdmin'])->name('admin.makeAdmin');
+    Route::post('/admin/user/{id}/remove-admin', [AdminController::class, 'removeAdmin'])->name('admin.removeAdmin');
+    Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.createUser');
+    Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.storeUser');
+    // news
+    Route::get('/admin/news', [NewsController::class, 'adminIndex'])->name('admin.news.index');
+    Route::get('/admin/news/create', [NewsController::class, 'create'])->name('admin.news.create');
+    Route::post('/admin/news', [NewsController::class, 'store'])->name('admin.news.store');
+    Route::get('/admin/news/{id}/edit', [NewsController::class, 'edit'])->name('admin.news.edit');
+    Route::put('/admin/news/{id}', [NewsController::class, 'update'])->name('admin.news.update');
+    Route::delete('/admin/news/{id}', [NewsController::class, 'destroy'])->name('admin.news.destroy');
+
+    // contact messages
+    // Route::resource('contact_messages', ContactMessageController::class)->only(['index', 'show', 'update', 'destroy']);
 });
 
-// Logout
-Route::post('/logout', function () {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect('/');
-})->name('logout');
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('contact_messages', ContactMessageController::class)->only([
+        'index', 'show', 'update', 'destroy'
+    ]);
+});
 
-
-Route::get('/about', function () {
-    return view('about');
-})->name('about');
-
-Route::get('/contact', function () {
-    return view('contact');
-})->name('contact');
-
+Route::middleware(['auth'])->prefix('messages')->name('messages.')->group(function () {
+    Route::get('inbox', [MessageController::class, 'inbox'])->name('inbox');
+    Route::get('sent', [MessageController::class, 'sent'])->name('sent');
+    Route::get('create', [MessageController::class, 'create'])->name('create');
+    Route::post('store', [MessageController::class, 'store'])->name('store');
+    Route::get('{id}', [MessageController::class, 'show'])->name('show');
+    Route::delete('{id}', [MessageController::class, 'destroy'])->name('destroy');
+});
 
 require __DIR__.'/auth.php';

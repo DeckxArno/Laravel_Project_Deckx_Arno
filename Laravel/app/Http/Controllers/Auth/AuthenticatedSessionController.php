@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
+use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Activity;
+use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Show the login view.
+     * Display the login view.
      */
-    public function create()
+    public function create(): View
     {
         return view('auth.login');
     }
@@ -21,28 +22,19 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(Request $request)
+    public function store(LoginRequest $request): RedirectResponse
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+        $request->authenticate();
 
-        if (Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
-            $request->session()->regenerate();
+        $request->session()->regenerate();
 
-            return redirect()->intended(RouteServiceProvider::HOME);
-        }
-
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request)
+    public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
 
@@ -51,20 +43,5 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
-    }
-
-    public function redirectToHome()
-    {
-        // Controleer of de gebruiker is ingelogd
-        if (Auth::check()) {
-            // Haal de activiteiten op uit de database
-            $activities = Activity::orderBy('created_at', 'desc')->get();
-
-            // Retourneer de homepage view met de activiteiten
-            return view('home', compact('activities'));
-        }
-
-        // Indien niet ingelogd, omleiden naar de loginpagina
-        return redirect()->route('login');
     }
 }

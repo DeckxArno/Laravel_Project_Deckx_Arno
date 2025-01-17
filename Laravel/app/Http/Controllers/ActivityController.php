@@ -9,10 +9,10 @@ class ActivityController extends Controller
 {
     public function index()
     {
-        // Haal alle activiteiten op, eventueel met paginering
-        $activities = Activity::latest()->paginate(10);
-
-        return view('home', compact('activities'));
+        $activities = Activity::all(); // Haal alle activiteiten op uit de database
+        return view('dashboard', compact('activities'));
     }
+
+
 }
 

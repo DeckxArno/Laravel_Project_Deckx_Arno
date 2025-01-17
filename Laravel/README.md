@@ -1,66 +1,114 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Activiteiten Net: Laravel Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Activiteiten Net is een dynamische website gebouwd met Laravel 11. Het project is gericht op jeugdbewegingen om activiteiten en spellen te beheren die ze tijdens vergaderingen en kampen kunnen gebruiken.
 
-## About Laravel
+## Installatie-instructies
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Volg onderstaande stappen om het project lokaal te installeren en te laten werken:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Vereisten
+- **PHP**: Versie 8.1 of hoger
+- **Composer**: Versie 2.0 of hoger
+- **Node.js**: Versie 16 of hoger
+- **MySQL**: Versie 8.0 of hoger
+- **Laravel**: Versie 11 (inbegrepen in project setup)
+- **XAMPP** (Apache & MySQL) of een andere lokale serveromgeving 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 2. Project downloaden
+1. Clone de repository:
+   ```bash
+   git clone <https://github.com/DeckxArno/Laravel_Project_Deckx_Arno.git>
+   cd Laravel
+   ```
+2. Installeer alle benodigde PHP-dependencies met Composer:
+   ```bash
+   composer install
+   ```
+3. Installeer JavaScript- en CSS-pakketten:
+   ```bash
+   npm install
+   npm run build
+   ```
 
-## Learning Laravel
+### 3. Database configuratie
+1. Maak een nieuwe MySQL-database aan of gebruik de localhost database.
+2. Kopieer het `.env.example`-bestand en hernoem het naar `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+3. Pas de database-instellingen aan in het `.env`-bestand:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=<kies hier de naam van jouw database>
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+4. Voer de migraties en seeders uit om de database te initialiseren:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 4. Start de server
+1. Start de lokale ontwikkelingsserver:
+   ```bash
+   php artisan serve
+   ```
+2. Open de website in je browser via: [http://localhost:8000]
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 5. Default admin
+Gebruik de volgende gegevens om in te loggen als admin:
+- **E-mailadres**: admin@ehb.be
+- **Wachtwoord**: Password!321
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 6. Default user
+- Email: user@ehb.be
+- Password: Password!321
 
-## Laravel Sponsors
+## Belangrijke features
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Voor deze opdracht waren er specifieke functionele eisen. Het behalen van deze eisen resulteert in een basisbeoordeling van 12/20. 
+Voor een hogere score kunnen extra functionaliteiten worden toegevoegd aan het project. Hieronder worden zowel de verplichte eisen als de extra's beschreven die in de website zijn opgenomen.
 
-### Premium Partners
+### Minimale Functionaliteiten
+- **Authenticatie**: Login, registratie, wachtwoordherstel en rollenbeheer (admin/gebruiker).
+- **Profielpagina**: Publieke profielpagina met bewerkbare gegevens zoals gebruikersnaam, verjaardag, profielfoto en een korte "Over mij"-tekst.
+- **Nieuwsbeheer**: Admins kunnen nieuwsitems beheren (toevoegen, wijzigen, verwijderen). Bezoekers kunnen alle nieuwsitems bekijken.
+- **FAQ-pagina**: Bezoekers kunnen een lijst van veelgestelde vragen per categorie bekijken. Admins kunnen vragen en categorieën beheren.
+- **Contactformulier**: Bezoekers kunnen een bericht sturen via een formulier. Admins ontvangen een e-mail met de inhoud van het formulier.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Extra Functionaliteiten
+- **Zoekfunctie**: Gebruikers kunnen eenvoudig andere gebruikers opzoeken via een zoekbalk.
+- **Privéberichten**: Een volledig privéberichten-systeem waarmee gebruikers elkaar kunnen bereiken.
+- **Nieuwsreacties**: Ingelogde gebruikers kunnen reacties plaatsen op nieuwsitems.
+- **Contactbeheer voor admins**: Admins kunnen contactformulieren bekijken en erop reageren vanuit een administratief paneel.
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Technische details
 
-## Code of Conduct
+### Database
+- **Relaties**:
+  - One-to-Many: Nieuwsitems en reacties.
+  - Many-to-Many: Gebruikers en rollen.
+- Database wordt geinitialiseerd met de seeders.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Beveiliging
+- **XSS-bescherming**: Voorkomt cross-site scripting door data te "ontsmetten" voordat deze wordt weergegeven.
+- **CSRF-bescherming**: Formulieren zijn beveiligd tegen CSRF-aanvallen.
+- **Client-side validatie**: Basisvalidatie via JavaScript en extra validatie op de server.
 
-## Security Vulnerabilities
+## Bronnen
+- Laravel-documentatie: [https://laravel.com/docs](https://laravel.com/docs)
+- [Canvas opdrachtbeschrijving](https://canvas.ehb.be/courses/40595/assignments/182099)
+- Bootstrap: [https://getbootstrap.com](https://getbootstrap.com)
+- Tutorials en voorbeeldcode:
+  - Traversy Media ([YouTube-kanaal](https://www.youtube.com/user/TechGuyWeb))
+  - [Canvas cursus](https://canvas.ehb.be/courses/40595)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Auteur
 
-## License
+Arno Deckx - 2e jaar Bachelor Toegepaste Informatica
+Gemaakt voor de opdracht Project1 - Laravel voor het vak Backend Web TI2.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---

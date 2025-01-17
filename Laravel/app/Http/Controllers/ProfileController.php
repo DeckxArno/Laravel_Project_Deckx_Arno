@@ -2,45 +2,79 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\ProfileUpdateRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
+use App\Models\Profile;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 class ProfileController extends Controller
 {
-    use AuthorizesRequests;
-    public function show(User $user)
+    public function show($username)
     {
-        return view('profile.show', compact('user'));
+        $profile = Profile::where('username', $username)->firstOrFail();
+        return view('profile.show', compact('profile'));
     }
 
-    public function edit(User $user)
-{
-    $this->authorize('update', $user); 
-    return view('profile.edit', compact('user'));
-}
-
-
-    public function update(Request $request, User $user)
+    public function edit()
     {
-        $this->authorize('update', $user);
+        $profile = Auth::user()->profile ?? new Profile();
+        return view('profile.edit', compact('profile'));
+    }
 
-        $validated = $request->validate([
-            'username' => 'nullable|string|max:255|unique:users,username,' . $user->id,
+    /**
+     * Update the user's profile information.
+     */
+    public function update(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string|max:255',
             'birthday' => 'nullable|date',
-            'profile_photo' => 'nullable|image|max:2048',
-            'about_me' => 'nullable|string|max:1000',
+            'profile_picture' => 'nullable|image|max:2048',
+            'about_me' => 'nullable|string'
         ]);
 
-        if ($request->hasFile('profile_photo')) {
-            if ($user->profile_photo) {
-                Storage::delete($user->profile_photo);
+        $user = Auth::user();
+        $profile = $user->profile ?? new Profile(['user_id' => $user->id]);
+
+        $profile->username = $request->username;
+        $profile->birthday = $request->birthday;
+        $profile->about_me = $request->about_me;
+
+        if ($request->hasFile('profile_picture')) {
+            if ($profile->profile_picture) {
+                Storage::delete('public/' . $profile->profile_picture);
             }
-            $validated['profile_photo'] = $request->file('profile_photo')->store('profile_photos');
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $profile->profile_picture = $path;
         }
 
-        $user->update($validated);
+        $profile->save();
 
-        return redirect()->route('profile.show', $user)->with('success', 'Profile updated successfully.');
+        return redirect()->route('profile.edit')->with('success', 'Profiel bijgewerkt!');
+    }
+
+    /**
+     * Delete the user's account.
+     */
+    public function destroy(Request $request): RedirectResponse
+    {
+        $request->validateWithBag('userDeletion', [
+            'password' => ['required', 'current_password'],
+        ]);
+
+        $user = $request->user();
+
+        Auth::logout();
+
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return Redirect::to('/');
     }
 }

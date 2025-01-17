@@ -22,11 +22,12 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'username',
-        'birthday', 
-        'profile_photo',
-        'about_me',
     ];
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -51,9 +52,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function isAdmin()
+    public function profile()
     {
-        return $this->role === 'admin';
+        return $this->hasOne(Profile::class);
     }
-
 }
